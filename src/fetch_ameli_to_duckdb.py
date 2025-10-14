@@ -10,6 +10,11 @@ import pandas as pd
 import os       
 import duckdb              
 
+
+
+#repertoire de travail
+os.chdir(r"C:\Users\saliou.thiam\OneDrive - Groupe Astek\Documents\Dossier Saliou\Test jerome lejeune\lejeune-test-technique")
+
 # -------------------- Paramètres API ------------------
 
 API_BASE = "https://data.ameli.fr/api/records/1.0/search/"  # URL de base de l'API (Ameli)
@@ -119,3 +124,5 @@ if __name__ == "__main__":
     print(con.execute("DESCRIBE cancers_idf;").fetchdf())
 
     con.close()
+    
+    
