@@ -76,7 +76,7 @@ def save_to_duckdb(df: pd.DataFrame) -> None:
 
     try:
        
-        db.execute(f"CREATE TABLE IF NOT EXISTS {TABLE} AS SELECT * FROM df LIMIT 0;")  #  Création de la TABLE en recuperant les noms de colonne de la table DataFrame df
+        db.execute(f"CREATE OR REPLACE TABLE {TABLE} AS SELECT * FROM df LIMIT 0;")  #  Création de la TABLE en recuperant les noms de colonne de la table DataFrame df
 
        
         db.execute(f"DELETE FROM {TABLE};") #Vide la table avant insertion → le script est idempotent (pas de doublons si on relance)
