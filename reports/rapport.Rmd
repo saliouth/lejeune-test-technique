@@ -1,0 +1,106 @@
+---
+title: "Rapport – Île-de-France & Cancers (Ameli)"
+author: "SALIOU THIAM"
+date: "`r format(Sys.Date())`"
+output:
+  html_document:
+    number_sections: true
+    theme: cosmo         # thème html (Bootswatch)
+    code_folding: hide   # plier le code par défaut
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+
+```{r library, message=FALSE, warning=FALSE}
+library(DBI)
+library(duckdb)
+library(dplyr)
+library(gtsummary)
+library(gt)
+
+
+```
+
+
+```{r connexion a la base }
+# Chemin vers la base (relative au .Rmd)
+
+db_path <- "../data/ameli_idf.duckdb"
+tbl_name <- "cancers_idf"
+
+
+# Connexion en lecture seule (sécurise et évite de modifier la base).
+db <- dbConnect(duckdb::duckdb(), dbdir = db_path, read_only = TRUE)
+
+
+```
+
+
+```{r verification de la base }
+
+
+#le check suivant a été commenté pour le lancer faut enlever les commentaires
+
+# voir si la table existe
+#dbGetQuery(db, "PRAGMA show_tables;")
+
+#  Vérifier que le script Python a bien chargé 100 lignes.
+#dbGetQuery(db, sprintf("SELECT COUNT(*) AS n FROM %s;", tbl_name))
+
+#appercu des 5 premieres lignes du tableau
+#peek <- dbGetQuery(db, sprintf("SELECT * FROM %s LIMIT 5;", tbl_name))
+
+
+
+```
+
+
+ 
+
+```{r recuperation des données}
+
+
+df <- dbGetQuery(db, sprintf("SELECT * FROM %s;", tbl_name))
+
+# Retirer l'ID technique pour qu'il n'apparaisse pas dans le tableau
+df <- dplyr::select(df, -dplyr::any_of(c("_recordid")))
+
+# Tableau descriptif global
+tab <- tbl_summary(
+  df,
+  missing = "ifany"   # affiche les manquants si présents
+) 
+
+# Un peu d'esthétique avec {gt}
+tab_gt <-
+  tab |>
+  as_gt() |>
+  tab_header(
+    title = md("**Résumé descriptif — IDF & Cancers**"),
+    subtitle = md("Échantillon de 100 lignes (API Ameli)")
+  ) |>
+  tab_options(
+    table.width = pct(100),
+    data_row.padding = px(4)
+  ) |>
+  tab_source_note(
+    md(paste0("Source : https://data.ameli.fr/explore/dataset/effectifs/table/ — rendu le ", format(Sys.Date())))
+  )
+
+tab_gt
+
+```
+:::info
++ Un filtre a été appliqué sur la région Île-de-France (11) et sur les pathologies « Cancers ».
++ Seules 100 lignes (enregistrements) ont été récupérées 
+:::
+
+```{r deconnexion de la base}
+dbDisconnect(db, shutdown = TRUE)
+```
