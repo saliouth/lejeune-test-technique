@@ -108,7 +108,7 @@ NOTES COMPLÉMENTAIRES
 - Dataset API ciblé : « effectifs » (Ameli).
 - Région Île-de-France = code INSEE 11 ; pathologie filtrée : « Cancers ».
 - Dans le commit “Added the rapport.Rmd code and the expected HTML report”, le fichier HTML n’a pas été inclus : il a été ajouté directement sur GitHub.
-
+- Pour ajouter le dossier Data (vide), c’était un peu compliqué, donc j’ai forcé le commit à inclure aussi le fichier ameli_idf.duckdb (même s’il est ignoré par le .gitignore)
 
 ========================================
 ARBORESCENCE DU PROJET (SYNTHÈSE)
